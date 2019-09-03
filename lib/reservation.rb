@@ -16,7 +16,7 @@ module Hotel
       @start_date = start_date    # this is already a date instance
       @end_date = end_date        # this is already a date instance
       @date_range = create_date_array  # this does not include the end date, so all occupied nights
-      @total_cost = @date_range.length * @room.cost
+      @total_cost = (@end_date - @start_date) * @room.cost
     end
     
     # Returns array of date objects for all dates 
