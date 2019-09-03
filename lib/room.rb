@@ -5,7 +5,7 @@ module Hotel
     
     def initialize(id, cost)
       @id = id
-      @cost = cost
+      @cost = cost  # Must be Float
     end
     
   end
