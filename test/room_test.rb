@@ -1,7 +1,7 @@
 require_relative 'test_helper'
 
 describe "Room class" do
-  describe "Room initiation" do
+  describe "Room instantiation" do
     before do
       # Must use @ to make it accessible without a reader
       @room = Hotel::Room.new(15, 200.00)
@@ -14,10 +14,10 @@ describe "Room class" do
     it "is set up for specific attributes and data types" do
       [:id, :cost].each do |prop|
         expect(@room).must_respond_to prop
-        
-        expect(@room.id).must_be_kind_of Integer
-        expect(@room.cost).must_be_kind_of Float
       end
+      
+      expect(@room.id).must_be_instance_of Integer
+      expect(@room.cost).must_be_instance_of Float
     end
   end
 end
