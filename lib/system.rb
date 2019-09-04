@@ -8,21 +8,22 @@ require_relative 'hotelblock'
 module Hotel
   class System
     
-    attr_reader :rooms, :reservations, :hotel_dates
+    attr_reader :rooms, :reservations, :hoteldates
     
     NUM_ROOMS = 20
+    COST_PER_NIGHT = 200
     
     def initialize
       @rooms = generate_rooms
       @reservations = []
-      @hotel_dates = []
+      @hoteldates = []
     end
     
     def generate_rooms
       array_of_room_obj = []
       
       (1..NUM_ROOMS).each do |i|
-        array_of_room_obj << Hotel::Room.new(i, 200.to_f)
+        array_of_room_obj << Hotel::Room.new(i, COST_PER_NIGHT.to_f)
       end
       
       return array_of_room_obj
@@ -35,7 +36,7 @@ module Hotel
     # Assume date inputs come in string format
     def make_reservation(start_date:, end_date:)
       # Find a room with no overlap
-      room = find_room(15)
+      room = find_room(20 - @reservations.length)
       
       # Create Reservation
       id = @reservations.length + 1
@@ -50,6 +51,7 @@ module Hotel
       add_to_dates(start_date, end_date, new_reservation)
       
       # return new_reservation
+      return new_reservation
     end
     
     def find_available_room
@@ -60,26 +62,29 @@ module Hotel
       
       until current_date == end_date
         date_obj = find_date(current_date)
-        if date_obj != nil
+        
+        if date_obj 
           date_obj.add_reservation(new_reservation)
         else
-          @hotel_dates << Hotel::HotelDate.new(current_date, @rooms)
+          @hoteldates << Hotel::HotelDate.new(current_date)
           find_date(current_date).add_reservation(new_reservation)
         end
-        p current_date
+        
         current_date += 1
       end
-    end
-    
-    def find_date(date_obj)
-      return @hotel_dates.find { |hotel_date| hotel_date.id == date_obj }
     end
     
     def find_room(room_id)
       return @rooms.find { |room| room.id == room_id }
     end
     
-    def list_reservations_for(date)
+    def find_date(date_obj)
+      return @hoteldates.find { |hotel_date| hotel_date.id == date_obj }
+    end
+    
+    def list_reservations_for(date_string)
+      hotel_date = find_date(Date.parse(date_string))
+      return hotel_date.list_reservations
     end
     
     def find_total_cost(reservation_id)
