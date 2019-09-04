@@ -19,6 +19,7 @@ module Hotel
       @total_cost = (@end_date - @start_date) * @room.cost
     end
     
+    # Get rid of if not in use
     # Returns array of date objects for all dates 
     # start_date to end_date
     # end_date not inclusive
