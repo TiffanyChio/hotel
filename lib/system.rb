@@ -29,6 +29,7 @@ module Hotel
     end
     
     def list_all_rooms
+      # We need to create a method? Or can we just do System.rooms
     end
     
     # Assume date inputs come in string format
