@@ -147,4 +147,15 @@ describe "System class" do
     end
   end
   
+  describe "HotelBlock Creation" do
+    before do
+      @sys = Hotel::System.new
+    end
+    
+    it "raises an error when trying to create a block of more than 5 rooms" do
+    end
+    
+    it "raises an error if one of the rooms is not available for the date range" do
+    end
+  end
 end

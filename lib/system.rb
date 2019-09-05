@@ -10,23 +10,11 @@ module Hotel
     
     attr_reader :rooms, :reservations, :hoteldates
     
-    NUM_ROOMS = 20
-    COST_PER_NIGHT = 200
-    
     def initialize
-      @rooms = generate_rooms
+      @rooms = Hotel::Room.generate_rooms
       @reservations = []
       @hoteldates = []
-    end
-    
-    def generate_rooms
-      array_of_room_obj = []
-      
-      (1..NUM_ROOMS).each do |i|
-        array_of_room_obj << Hotel::Room.new(i, COST_PER_NIGHT.to_f)
-      end
-      
-      return array_of_room_obj
+      @hotelblocks = []
     end
     
     # Assume date inputs come in string format
@@ -59,9 +47,7 @@ module Hotel
       until current_date == end_date
         hotel_date = find_date(current_date)
         
-        if hotel_date 
-          all_occupied_rooms += hotel_date.rooms_occupied
-        end
+        all_occupied_rooms += hotel_date.rooms_occupied if hotel_date 
         
         current_date += 1
       end
@@ -76,14 +62,12 @@ module Hotel
       
       until current_date == end_date
         date_obj = find_date(current_date)
-        
         if date_obj 
           date_obj.add_reservation(new_reservation)
         else
           @hoteldates << Hotel::HotelDate.new(current_date)
           find_date(current_date).add_reservation(new_reservation)
         end
-        
         current_date += 1
       end
     end
@@ -102,6 +86,28 @@ module Hotel
         return hotel_date.list_reservations
       else 
         return nil
+      end
+    end
+    
+    # Everything is a string
+    # hb_rooms is an array of room ids, ints
+    def create_hotelblock(start_date:, end_date:, hb_rooms:, discount_rate:)
+      start_date = Date.parse(start_date)
+      end_date = Date.parse(end_date)
+      discount_rate = discount_rate.to_f
+      
+      raise ArgumentError, 'A block can contain a maximum of 5 rooms.' if hb_rooms.length > 5
+      
+      available_rooms = find_all_available_rooms(start_date, end_date)
+      
+      # Does block contain a room that is not part of available rooms?
+      # If so raise an error.
+      if hb_rooms.map{ |room| available_rooms.include? room}.include? false
+        raise ArgumentError, 'A block can contain a maximum of 5 rooms.' if hb_rooms.length > 5
+      end
+      
+      hb_rooms.each do |room|
+        
       end
     end
     
