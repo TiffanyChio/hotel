@@ -8,7 +8,7 @@ module Hotel
     
     def initialize(id)
       @id = id  # This is a date object
-      @occupied = {}  # This is a hash, input was array
+      @occupied = {}  
     end
     
     # occupied is a hash with key room_id and values of reservation instance

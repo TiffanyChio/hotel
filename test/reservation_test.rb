@@ -15,7 +15,7 @@ describe "Reservation class" do
     end
     
     it "is set up for specific attributes and data types" do
-      [:id, :room, :start_date, :end_date, :total_cost].each do |prop|
+      [:id, :room, :start_date, :end_date, :cost].each do |prop|
         expect(@reservation).must_respond_to prop
       end
       
@@ -23,11 +23,16 @@ describe "Reservation class" do
       expect(@reservation.room).must_be_instance_of Hotel::Room
       expect(@reservation.start_date).must_be_instance_of Date
       expect(@reservation.end_date).must_be_instance_of Date
-      expect(@reservation.total_cost).must_be_instance_of Float
+      expect(@reservation.cost).must_be_instance_of Float
     end
     
+    it "correctly assigns cost value" do
+      expect(@reservation.cost).must_be_close_to 200.0
+    end 
+    
+    # TIFF PUT THIS SOMEWHERE ELSE
     it "correctly calculates total_cost" do
-      expect(@reservation.total_cost).must_be_close_to 200.0*5
+      expect(@reservation.find_total_cost).must_be_close_to 200.0*5
     end 
   end
   

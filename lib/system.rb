@@ -1,5 +1,4 @@
 require 'date'
-require 'pry'
 
 require_relative 'room'
 require_relative 'reservation'
@@ -38,7 +37,6 @@ module Hotel
       
       # Find a room with no overlap
       room = find_all_available_rooms(start_date, end_date)[0]
-      
       raise ArgumentError, 'No rooms available' if room == nil
       
       # Create Reservation

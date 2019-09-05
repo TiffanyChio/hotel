@@ -41,7 +41,8 @@ describe "System class" do
       expect(@first_res.id).must_equal 1
       expect(@first_res.start_date).must_equal Date.parse('2019-06-05')
       expect(@first_res.end_date).must_equal Date.parse('2019-06-08')
-      expect(@first_res.total_cost).must_equal (3*200.0)
+      expect(@first_res.cost).must_equal 200.0
+      expect(@first_res.find_total_cost).must_equal (3*200.0)
     end
     
     it "adds the new reservation to the list of reservations" do
