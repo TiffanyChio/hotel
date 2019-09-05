@@ -1,4 +1,5 @@
 require 'date'
+require 'pry'
 
 require_relative 'room'
 require_relative 'reservation'
@@ -29,19 +30,18 @@ module Hotel
       return array_of_room_obj
     end
     
-    def list_all_rooms
-      # We need to create a method? Or can we just do System.rooms
-    end
-    
     # Assume date inputs come in string format
-    def make_reservation(start_date:, end_date:)
-      # Find a room with no overlap
-      room = find_room(20 - @reservations.length)
-      
-      # Create Reservation
+    def make_reservation(start_date:, end_date:) 
       id = @reservations.length + 1
       start_date = Date.parse(start_date)
       end_date = Date.parse(end_date)
+      
+      # Find a room with no overlap
+      room = find_available_room(start_date, end_date)
+      
+      raise ArgumentError, 'No rooms available' if room == nil
+      
+      # Create Reservation
       new_reservation = Hotel::Reservation.new(id: id, room: room, start_date: start_date, end_date: end_date)
       
       # Connect to Reservations List
@@ -54,7 +54,29 @@ module Hotel
       return new_reservation
     end
     
-    def find_available_room
+    def find_available_room(start_date, end_date)
+      current_date = start_date.dup
+      all_occupied_rooms = []
+      
+      until current_date == end_date
+        hotel_date = find_date(current_date)
+        
+        if hotel_date 
+          all_occupied_rooms += hotel_date.rooms_occupied
+        end
+        
+        current_date += 1
+      end
+      
+      all_occupied_rooms.uniq!
+      
+      @rooms.each do |room|
+        unless all_occupied_rooms.include? room
+          return room
+        end
+      end
+      
+      return nil
     end
     
     def add_to_dates(start_date, end_date, new_reservation)
@@ -84,10 +106,17 @@ module Hotel
     
     def list_reservations_for(date_string)
       hotel_date = find_date(Date.parse(date_string))
-      return hotel_date.list_reservations
+      if hotel_date 
+        return hotel_date.list_reservations
+      else 
+        return nil
+      end
     end
     
-    def find_total_cost(reservation_id)
-    end
   end
 end
+
+# sys = Hotel::System.new
+# first_res = sys.make_reservation(start_date: '2019-06-05', end_date: '2019-06-08')
+# second_res = sys.make_reservation(start_date: '2019-06-06', end_date: '2019-06-09')
+# third_res = sys.make_reservation(start_date: '2019-06-05', end_date: '2019-06-09')

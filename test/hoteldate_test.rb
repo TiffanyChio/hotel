@@ -3,39 +3,54 @@ require_relative 'test_helper'
 describe "HotelDate class" do
   describe "HotelDate instantiation" do
     before do
-      @date_1 = Hotel::HotelDate.new(Date.parse('2019-09-03'))
+      @hotel_date = Hotel::HotelDate.new(Date.parse('2019-09-03'))
     end
     
     it "is an instance of HotelDate" do
-      expect(@date_1).must_be_kind_of Hotel::HotelDate
+      expect(@hotel_date).must_be_kind_of Hotel::HotelDate
     end
     
     it "is set up for specific attributes and data types" do
       [:id, :occupied].each do |prop|
-        expect(@date_1).must_respond_to prop
+        expect(@hotel_date).must_respond_to prop
       end
       
-      expect(@date_1.id).must_be_instance_of Date
-      expect(@date_1.occupied).must_be_instance_of Hash
+      expect(@hotel_date.id).must_be_instance_of Date
+      expect(@hotel_date.occupied).must_be_instance_of Hash
     end
     
   end
   
-  # TIFF: I think you need to clean this up. Esp the set-up portion.
-  it "can add a add_reservation" do
-    id = Date.parse('2019-09-03')
-    @date_2 = Hotel::HotelDate.new(id)
+  describe "HotelDate instance methods" do
+    before do
+      @hotel_date = Hotel::HotelDate.new(Date.parse('2019-09-03'))
+      
+      @room_15 = Hotel::Room.new(15, 200.00)
+      start_time = Date.parse('2019-09-03')
+      end_time = Date.parse('2019-09-08')
+      @reservation = Hotel::Reservation.new(id: 101, room: @room_15, start_date: start_time, end_date: end_time)
+      
+      @hotel_date.add_reservation(@reservation)
+    end
     
-    room_15 = Hotel::Room.new(15, 200.00)
-    start_time = Date.parse('2019-09-03')
-    end_time = Date.parse('2019-09-08')
-    @reservation = Hotel::Reservation.new(id: 101, room: room_15, start_date: start_time, end_date: end_time)
+    it "can add a reservation" do
+      expect(@hotel_date.occupied.keys.first).must_be_instance_of Hotel::Room
+      expect(@hotel_date.occupied.values.first).must_be_instance_of Hotel::Reservation
+      expect(@hotel_date.occupied[@room_15]).must_equal @reservation
+    end
     
-    @date_2.add_reservation(@reservation)
+    it "returns an array of reservations under a given date" do
+      expect(@hotel_date.list_reservations).must_be_instance_of Array
+      
+      expect(@hotel_date.list_reservations.length).must_equal 1
+      expect(@hotel_date.list_reservations[0]).must_equal @reservation
+    end
     
-    expect(@date_2.occupied.keys.first).must_be_instance_of Integer
-    expect(@date_2.occupied.values.first).must_be_instance_of Hotel::Reservation
-    expect(@date_2.occupied[15]).must_equal @reservation
+    it "returns an array of occupied rooms under a given date" do
+      expect(@hotel_date.rooms_occupied).must_be_instance_of Array
+      
+      expect(@hotel_date.rooms_occupied.length).must_equal 1
+      expect(@hotel_date.rooms_occupied[0]).must_equal @room_15
+    end
   end
-  
 end

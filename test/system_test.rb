@@ -79,7 +79,28 @@ describe "System class" do
       expect(@sys.hoteldates[2].occupied.length).must_equal 2
       expect(@sys.hoteldates[3].occupied.length).must_equal 1
     end
+  end
+  
+  describe "list_reservations_for method" do
+    before do
+      @sys = Hotel::System.new
+    end
     
+    it "returns nil when no reservations have been made yet" do
+      res_list = @sys.list_reservations_for('2020-08-09')
+      
+      expect(res_list).must_equal nil
+    end
+    
+    it "returns an array of reservations for a given date" do
+      first_res = @sys.make_reservation(start_date: '2019-06-05', end_date: '2019-06-08')
+      second_res = @sys.make_reservation(start_date: '2019-06-06', end_date: '2019-06-09')
+      
+      res_list = @sys.list_reservations_for('2019-06-06')
+      expect(res_list.length).must_equal 2
+      expect(res_list.include? first_res).must_equal true
+      expect(res_list.include? second_res).must_equal true
+    end
   end
   
 end
