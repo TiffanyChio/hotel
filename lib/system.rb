@@ -37,7 +37,7 @@ module Hotel
       end_date = Date.parse(end_date)
       
       # Find a room with no overlap
-      room = find_available_room(start_date, end_date)
+      room = find_all_available_rooms(start_date, end_date)[0]
       
       raise ArgumentError, 'No rooms available' if room == nil
       
@@ -54,7 +54,7 @@ module Hotel
       return new_reservation
     end
     
-    def find_available_room(start_date, end_date)
+    def find_all_available_rooms(start_date, end_date)
       current_date = start_date.dup
       all_occupied_rooms = []
       
@@ -70,13 +70,7 @@ module Hotel
       
       all_occupied_rooms.uniq!
       
-      @rooms.each do |room|
-        unless all_occupied_rooms.include? room
-          return room
-        end
-      end
-      
-      return nil
+      return @rooms - all_occupied_rooms
     end
     
     def add_to_dates(start_date, end_date, new_reservation)
@@ -116,7 +110,3 @@ module Hotel
   end
 end
 
-# sys = Hotel::System.new
-# first_res = sys.make_reservation(start_date: '2019-06-05', end_date: '2019-06-08')
-# second_res = sys.make_reservation(start_date: '2019-06-06', end_date: '2019-06-09')
-# third_res = sys.make_reservation(start_date: '2019-06-05', end_date: '2019-06-09')
