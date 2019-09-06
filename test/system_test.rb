@@ -11,7 +11,7 @@ describe "System class" do
     end
     
     it "is set up for specific attributes and data types" do
-      [:rooms, :reservations, :hoteldates].each do |prop|
+      [:rooms, :reservations, :hoteldates, :hotelblocks].each do |prop|
         expect(@sys).must_respond_to prop
       end
       
@@ -20,6 +20,7 @@ describe "System class" do
       expect(@sys.rooms.last).must_be_instance_of Hotel::Room
       expect(@sys.reservations).must_be_instance_of Array
       expect(@sys.hoteldates).must_be_instance_of Array
+      expect(@sys.hotelblocks).must_be_instance_of Hash
     end
     
     it "executes generate rooms method correctly" do
@@ -154,8 +155,11 @@ describe "System class" do
     end
     
     it "adds to the hotelblocks list" do
-      expect(@sys.hotelblocks.length).must_equal 4
-      expect(@sys.hotelblocks.first).must_be_instance_of Hotel::HotelBlock
+      expect(@sys.hotelblocks.length).must_equal 1
+      expect(@sys.hotelblocks.keys.first).must_equal 1
+      expect(@sys.hotelblocks.values.first).must_be_instance_of Array
+      expect(@sys.hotelblocks[1].first).must_be_instance_of Hotel::HotelBlock
+      expect(@sys.hotelblocks[1][2].room.id).must_equal 3
     end
     
     it "updates the hoteldates list" do

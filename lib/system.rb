@@ -112,12 +112,14 @@ module Hotel
         raise ArgumentError, 'Block contains room already booked.'
       end
       
-      hb_id = @hotelblocks.length
+      hb_id = @hotelblocks.length + 1
+      @hotelblocks[hb_id] = []
+      
       
       hb_rooms.each do |room|
         new_hotel_block = Hotel::HotelBlock.new(id: hb_id, room: room, start_date: start_date, end_date: end_date, cost:discount_rate)
         
-        @hotelblocks << new_hotel_block
+        @hotelblocks[hb_id] << new_hotel_block
         
         add_to_dates(start_date, end_date, new_hotel_block)
       end
