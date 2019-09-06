@@ -29,5 +29,6 @@ module Hotel
     def rooms_occupied
       return @occupied.keys
     end
+    
   end
 end
