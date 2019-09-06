@@ -115,7 +115,6 @@ module Hotel
       hb_id = @hotelblocks.length + 1
       @hotelblocks[hb_id] = []
       
-      
       hb_rooms.each do |room|
         new_hotel_block = Hotel::HotelBlock.new(id: hb_id, room: room, start_date: start_date, end_date: end_date, cost:discount_rate)
         
@@ -125,10 +124,36 @@ module Hotel
       end
     end
     
-    def reserve_from_block(block_id, room_id)
+    def find_open_rooms_from_block(hb_id)
+      hotel_blocks = @hotelblocks[hb_id]
+      open_rooms = hotel_blocks.select { |hotel_block| hotel_block.status == :AVAILABLE}
+      
+      open_rooms.map! { |hotel_block| hotel_block.room.id}
+      
+      return open_rooms
+    end
+    
+    def reserve_from_block(hb_id, room_id)
+      # check availability
+      unless find_open_rooms_from_block(hb_id).include? room_id
+        raise ArgumentError, 'The room you are trying to book is not available.'
+      end
+      
       # change status 
+      hotel_block = @hotelblocks[hb_id].find {|hb| hb.room.id == room_id}
+      hotel_block.change_status
+      
       # make reservation with pre-determined arg
-      # add res to @reservations
+      id = @reservations.length + 1
+      room = find_room(room_id)
+      start_date = hotel_block.start_date
+      end_date = hotel_block.end_date
+      cost = hotel_block.cost
+      
+      new_reservation = Hotel::Reservation.new(id: id, room: room, start_date: start_date, end_date: end_date, cost: cost)
+      
+      # Connect to Reservations List
+      @reservations << new_reservation 
     end
     
   end

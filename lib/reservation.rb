@@ -16,7 +16,7 @@ module Hotel
       @start_date = start_date    # this is already a date instance
       @end_date = end_date        # this is already a date instance
       @cost = cost
-      @cost ||= room.cost.to_f
+      @cost ||= room.cost
     end
     
     def find_total_cost

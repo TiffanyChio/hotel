@@ -192,6 +192,50 @@ describe "System class" do
     end
   end
   
-  describe "" do
+  describe "Reserving from a HotelBlock" do
+    before do
+      @sys = Hotel::System.new
+      hotel_block = @sys.create_hotelblock(start_date: '2019-09-02', end_date: '2019-09-05', hb_rooms: [7,8,9,10], discount_rate: 165)
+      
+      @sys.reserve_from_block(1, 8)
+    end
+    
+    it "can make a reservation from a hotel block" do
+      expect(@sys.find_open_rooms_from_block(1)).must_equal [7,9,10]
+      expect(@sys.reservations[0].room.id).must_equal 8
+    end
+    
+    it "makes reservations for the duration of the hotel block" do
+      expect(@sys.reservations[0].start_date).must_equal Date.parse('2019-09-02')
+      expect(@sys.reservations[0].end_date).must_equal Date.parse('2019-09-05')
+    end
+    
+    it "returns all available rooms in a HotelBlock" do
+      available_rooms = @sys.find_open_rooms_from_block(1)
+      
+      expect(available_rooms.length).must_equal 3
+      expect(available_rooms).must_equal [7,9,10]
+    end
+    
+    it "raises an error when reserving a room that's already reserved" do
+      expect{ @sys.reserve_from_block(1, 8) }.must_raise ArgumentError
+    end
+    
+    it "adds the reservation made from the HotelBlock into the Reservations list" do
+      @sys.reserve_from_block(1, 10)
+      
+      expect(@sys.reservations[1].room.id).must_equal 10
+      expect(@sys.reservations[1]).must_be_instance_of Hotel::Reservation
+    end
+    
+    it "returns nil if no rooms are available" do
+      @sys.reserve_from_block(1, 10)
+      @sys.reserve_from_block(1, 7)
+      @sys.reserve_from_block(1, 9)
+      
+      available_rooms = @sys.find_open_rooms_from_block(1)
+      
+      expect(available_rooms).must_equal []
+    end
   end
 end
