@@ -64,10 +64,10 @@ module Hotel
       until current_date == end_date
         date_obj = find_date(current_date)
         if date_obj 
-          date_obj.add_reservation(new_reservation)
+          date_obj.add_occupancy(new_reservation)
         else
           @hoteldates << Hotel::HotelDate.new(current_date)
-          find_date(current_date).add_reservation(new_reservation)
+          find_date(current_date).add_occupancy(new_reservation)
         end
         current_date += 1
       end

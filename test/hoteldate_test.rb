@@ -30,7 +30,7 @@ describe "HotelDate class" do
       end_time = Date.parse('2019-09-08')
       @reservation = Hotel::Reservation.new(id: 101, room: @room_15, start_date: start_time, end_date: end_time)
       
-      @hotel_date.add_reservation(@reservation)
+      @hotel_date.add_occupancy(@reservation)
     end
     
     it "can add a reservation" do
