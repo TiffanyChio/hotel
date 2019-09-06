@@ -14,7 +14,7 @@ module Hotel
       @rooms = Hotel::Room.generate_rooms
       @reservations = []
       @hoteldates = []
-      @hotelblocks = []
+      @hotelblocks = {}
     end
     
     # Assume date inputs come in string format
@@ -107,7 +107,7 @@ module Hotel
       
       # Does block contain a room that is not part of available rooms?
       # If so raise an error.
-      # Hey TIFF make this part longer to nclude which room
+      # Hey TIFF make this part longer to include which room
       if hb_rooms.map{ |room| available_rooms.include? room}.include? false
         raise ArgumentError, 'Block contains room already booked.'
       end

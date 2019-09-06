@@ -168,19 +168,26 @@ describe "System class" do
       expect(@sys.hoteldates[2].id).must_equal Date.parse('2019-09-04')
     end
     
-  end
-  
-  describe "Raising Errors for HotelBlock Creation" do
-    before do
-      @sys = Hotel::System.new
+    it "excludes the room from reservation during the same date range" do
+      new_reservation = @sys.make_reservation(start_date: '2019-09-04', end_date: '2019-09-07')
+      expect(new_reservation.room.id).must_equal 5
+      
+      15.times do
+        @sys.make_reservation(start_date: '2019-09-04', end_date: '2019-09-07')
+      end
+      
+      expect{@sys.make_reservation(start_date: '2019-09-04', end_date: '2019-09-07')}.must_raise ArgumentError
+    end
+    
+    it "excludes the room from be added to hotel block during the same date range" do
+      expect{@sys.create_hotelblock(start_date: '2019-09-04', end_date: '2019-09-07', hb_rooms: [2,5,6,7], discount_rate: 165)}.must_raise ArgumentError
     end
     
     it "raises an error when trying to create a block of more than 5 rooms" do
       expect{@sys.create_hotelblock(start_date: '2019-09-02', end_date: '2019-09-05', hb_rooms: [1,2,3,4,5,6], discount_rate: 165)}.must_raise ArgumentError
     end
-    
-    # it "raises an error if one of the rooms is not available for the date range" do
-    #   expect{@sys.create_hotelblock(start_date: '2019-09-02', end_date: '2019-09-05', hb_rooms: [1,2,3], discount_rate: 165)}.must_raise ArgumentError
-    # end
+  end
+  
+  describe "" do
   end
 end
