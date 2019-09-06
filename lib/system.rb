@@ -36,6 +36,7 @@ module Hotel
       # Create Date or Add to it, add to Dates list
       add_to_dates(start_date, end_date, new_reservation)
       
+      #TIFF GET RID OF THIS AND CORRESPONDING TEST
       # return new_reservation
       return new_reservation
     end
@@ -90,11 +91,12 @@ module Hotel
     end
     
     # Everything is a string
-    # hb_rooms is an array of room ids, ints
+    # hb_rooms is an array of room_ids
     def create_hotelblock(start_date:, end_date:, hb_rooms:, discount_rate:)
       start_date = Date.parse(start_date)
       end_date = Date.parse(end_date)
       discount_rate = discount_rate.to_f
+      hb_rooms.map! { |room_id| find_room(room_id) }
       
       raise ArgumentError, 'A block can contain a maximum of 5 rooms.' if hb_rooms.length > 5
       
@@ -106,9 +108,21 @@ module Hotel
         raise ArgumentError, 'A block can contain a maximum of 5 rooms.' if hb_rooms.length > 5
       end
       
+      hb_id = @hotelblocks.length
+      
       hb_rooms.each do |room|
+        new_hotel_block = Hotel::HotelBlock.new(id: hb_id, room: room, start_date: start_date, end_date: end_date, cost:discount_rate)
         
+        @hotelblocks << new_hotel_block
+        
+        add_to_dates(start_date, end_date, new_hotel_block)
       end
+    end
+    
+    def reserve_from_block(block_id, room_id)
+      # change status 
+      # make reservation with pre-determined arg
+      # add res to @reservations
     end
     
   end

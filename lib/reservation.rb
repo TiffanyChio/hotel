@@ -20,7 +20,7 @@ module Hotel
     end
     
     def find_total_cost
-      return (@end_date - @start_date) * cost
+      return (@end_date - @start_date) * @cost.to_f
     end
     
   end
