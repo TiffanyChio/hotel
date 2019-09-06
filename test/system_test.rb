@@ -101,7 +101,7 @@ describe "System class" do
       @sys = Hotel::System.new
     end
     
-    it "returns nil when no reservations have been made yet" do
+    it "returns nil when no reservations have been made for given date" do
       res_list = @sys.list_reservations_for('2020-08-09')
       
       expect(res_list).must_be_nil
@@ -150,12 +150,37 @@ describe "System class" do
   describe "HotelBlock Creation" do
     before do
       @sys = Hotel::System.new
+      @sys.create_hotelblock(start_date: '2019-09-02', end_date: '2019-09-05', hb_rooms: [1,2,3,4], discount_rate: 165)
+    end
+    
+    it "adds to the hotelblocks list" do
+      expect(@sys.hotelblocks.length).must_equal 4
+      expect(@sys.hotelblocks.first).must_be_instance_of Hotel::HotelBlock
+    end
+    
+    it "updates the hoteldates list" do
+      expect(@sys.hoteldates.length).must_equal 3
+      
+      expect(@sys.hoteldates.first).must_be_instance_of Hotel::HotelDate
+      
+      expect(@sys.hoteldates[0].id).must_equal Date.parse('2019-09-02')
+      expect(@sys.hoteldates[1].id).must_equal Date.parse('2019-09-03')
+      expect(@sys.hoteldates[2].id).must_equal Date.parse('2019-09-04')
+    end
+    
+  end
+  
+  describe "Raising Errors for HotelBlock Creation" do
+    before do
+      @sys = Hotel::System.new
     end
     
     it "raises an error when trying to create a block of more than 5 rooms" do
+      expect{@sys.create_hotelblock(start_date: '2019-09-02', end_date: '2019-09-05', hb_rooms: [1,2,3,4,5,6], discount_rate: 165)}.must_raise ArgumentError
     end
     
-    it "raises an error if one of the rooms is not available for the date range" do
-    end
+    # it "raises an error if one of the rooms is not available for the date range" do
+    #   expect{@sys.create_hotelblock(start_date: '2019-09-02', end_date: '2019-09-05', hb_rooms: [1,2,3], discount_rate: 165)}.must_raise ArgumentError
+    # end
   end
 end

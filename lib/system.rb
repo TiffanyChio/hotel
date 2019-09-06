@@ -8,7 +8,7 @@ require_relative 'hotelblock'
 module Hotel
   class System
     
-    attr_reader :rooms, :reservations, :hoteldates
+    attr_reader :rooms, :reservations, :hoteldates, :hotelblocks
     
     def initialize
       @rooms = Hotel::Room.generate_rooms
@@ -90,22 +90,26 @@ module Hotel
       end
     end
     
-    # Everything is a string
+    # Dates are strings
     # hb_rooms is an array of room_ids
+    # Discount rate can be whatever number
     def create_hotelblock(start_date:, end_date:, hb_rooms:, discount_rate:)
       start_date = Date.parse(start_date)
       end_date = Date.parse(end_date)
       discount_rate = discount_rate.to_f
       hb_rooms.map! { |room_id| find_room(room_id) }
       
-      raise ArgumentError, 'A block can contain a maximum of 5 rooms.' if hb_rooms.length > 5
+      if hb_rooms.length > 5
+        raise ArgumentError, 'A block can contain a maximum of 5 rooms.'
+      end
       
       available_rooms = find_all_available_rooms(start_date, end_date)
       
       # Does block contain a room that is not part of available rooms?
       # If so raise an error.
+      # Hey TIFF make this part longer to nclude which room
       if hb_rooms.map{ |room| available_rooms.include? room}.include? false
-        raise ArgumentError, 'A block can contain a maximum of 5 rooms.' if hb_rooms.length > 5
+        raise ArgumentError, 'Block contains room already booked.'
       end
       
       hb_id = @hotelblocks.length
@@ -127,4 +131,6 @@ module Hotel
     
   end
 end
+
+
 

@@ -18,3 +18,4 @@ module Hotel
     end
   end
 end
+
