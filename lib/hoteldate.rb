@@ -2,7 +2,7 @@ require_relative 'room'
 require_relative 'reservation'
 
 module Hotel
-  class HotelDate
+  class Date
     
     attr_reader :id, :occupied
     

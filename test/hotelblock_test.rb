@@ -4,8 +4,8 @@ describe "HotelBlock class" do
   describe "HotelBlock instantiation" do
     before do
       room_15 = Hotel::Room.new(15, 200.00)
-      start_time = Date.parse('2019-09-03')
-      end_time = Date.parse('2019-09-08')
+      start_time = ::Date.parse('2019-09-03')
+      end_time = ::Date.parse('2019-09-08')
       
       @hotelblock = Hotel::HotelBlock.new(id: 101, room: room_15, start_date: start_time, end_date: end_time, cost: 100)
     end
@@ -39,8 +39,8 @@ describe "HotelBlock class" do
   describe "the status of hotelblock" do
     before do
       room_15 = Hotel::Room.new(15, 200.00)
-      start_time = Date.parse('2019-09-03')
-      end_time = Date.parse('2019-09-08')
+      start_time = ::Date.parse('2019-09-03')
+      end_time = ::Date.parse('2019-09-08')
       
       @hotelblock = Hotel::HotelBlock.new(id: 101, room: room_15, start_date: start_time, end_date: end_time, cost: 100)
     end
@@ -58,16 +58,16 @@ describe "HotelBlock class" do
   describe "raises an exception when an invalid date range is provided" do
     it "raises an error if end date is before start date" do
       room_15 = Hotel::Room.new(15, 200.00)
-      start_time = Date.parse('2019-09-03')
-      end_time = Date.parse('2019-09-01')
+      start_time = ::Date.parse('2019-09-03')
+      end_time = ::Date.parse('2019-09-01')
       
       expect{Hotel::HotelBlock.new(id: 101, room: room_15, start_date: start_time, end_date: end_time, cost: 100)}.must_raise ArgumentError
     end
     
     it "raises an error if end date is on same day as start date" do
       room_15 = Hotel::Room.new(15, 200.00)
-      start_time = Date.parse('2019-09-03')
-      end_time = Date.parse('2019-09-03')
+      start_time = ::Date.parse('2019-09-03')
+      end_time = ::Date.parse('2019-09-03')
       
       expect{Hotel::HotelBlock.new(id: 101, room: room_15, start_date: start_time, end_date: end_time, cost: 100)}.must_raise ArgumentError
     end

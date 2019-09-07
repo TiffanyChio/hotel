@@ -11,7 +11,7 @@ describe "System class" do
     end
     
     it "is set up for specific attributes and data types" do
-      [:rooms, :reservations, :hoteldates, :hotelblocks].each do |prop|
+      [:rooms, :reservations, :dates, :hotelblocks].each do |prop|
         expect(@sys).must_respond_to prop
       end
       
@@ -19,7 +19,7 @@ describe "System class" do
       expect(@sys.rooms.first).must_be_instance_of Hotel::Room
       expect(@sys.rooms.last).must_be_instance_of Hotel::Room
       expect(@sys.reservations).must_be_instance_of Array
-      expect(@sys.hoteldates).must_be_instance_of Array
+      expect(@sys.dates).must_be_instance_of Array
       expect(@sys.hotelblocks).must_be_instance_of Hash
     end
     
@@ -33,15 +33,15 @@ describe "System class" do
   describe "making a room reservation" do
     before do
       @sys = Hotel::System.new
-      @first_res = @sys.make_reservation(Date.parse('2019-06-05'), Date.parse('2019-06-08'))
+      @first_res = @sys.make_reservation(::Date.parse('2019-06-05'), ::Date.parse('2019-06-08'))
     end
     
     it "returns a new reservation with correct dates" do
       expect(@first_res).must_be_instance_of Hotel::Reservation
       
       expect(@first_res.id).must_equal 1
-      expect(@first_res.start_date).must_equal Date.parse('2019-06-05')
-      expect(@first_res.end_date).must_equal Date.parse('2019-06-08')
+      expect(@first_res.start_date).must_equal ::Date.parse('2019-06-05')
+      expect(@first_res.end_date).must_equal ::Date.parse('2019-06-08')
       expect(@first_res.cost).must_equal 200.0
       expect(@first_res.find_total_cost).must_equal (3*200.0)
     end
@@ -52,48 +52,48 @@ describe "System class" do
     end
     
     it "adds the date range of the reservation for which nights are occupied to the list of dates" do
-      expect(@sys.hoteldates.length).must_equal 3
-      expect(@sys.hoteldates[0].id).must_equal Date.parse('2019-06-05')
-      expect(@sys.hoteldates[1].id).must_equal Date.parse('2019-06-06')
-      expect(@sys.hoteldates[2].id).must_equal Date.parse('2019-06-07')
+      expect(@sys.dates.length).must_equal 3
+      expect(@sys.dates[0].id).must_equal ::Date.parse('2019-06-05')
+      expect(@sys.dates[1].id).must_equal ::Date.parse('2019-06-06')
+      expect(@sys.dates[2].id).must_equal ::Date.parse('2019-06-07')
     end
     
-    it "does not create a new HotelDate object when one already exists" do
-      second_res = @sys.make_reservation(Date.parse('2019-06-06'), Date.parse('2019-06-09'))
+    it "does not create a new Hotel::Date object when one already exists" do
+      second_res = @sys.make_reservation(::Date.parse('2019-06-06'), ::Date.parse('2019-06-09'))
       
       expect(@sys.reservations.length).must_equal 2
-      expect(@sys.hoteldates.length).must_equal 4
+      expect(@sys.dates.length).must_equal 4
       
-      expect(@sys.hoteldates[0].id).must_equal Date.parse('2019-06-05')
-      expect(@sys.hoteldates[1].id).must_equal Date.parse('2019-06-06')
-      expect(@sys.hoteldates[2].id).must_equal Date.parse('2019-06-07')
-      expect(@sys.hoteldates[3].id).must_equal Date.parse('2019-06-08')
+      expect(@sys.dates[0].id).must_equal ::Date.parse('2019-06-05')
+      expect(@sys.dates[1].id).must_equal ::Date.parse('2019-06-06')
+      expect(@sys.dates[2].id).must_equal ::Date.parse('2019-06-07')
+      expect(@sys.dates[3].id).must_equal ::Date.parse('2019-06-08')
       
-      expect(@sys.hoteldates[0].occupied.length).must_equal 1
-      expect(@sys.hoteldates[1].occupied.length).must_equal 2
-      expect(@sys.hoteldates[2].occupied.length).must_equal 2
-      expect(@sys.hoteldates[3].occupied.length).must_equal 1
+      expect(@sys.dates[0].occupied.length).must_equal 1
+      expect(@sys.dates[1].occupied.length).must_equal 2
+      expect(@sys.dates[2].occupied.length).must_equal 2
+      expect(@sys.dates[3].occupied.length).must_equal 1
     end
     
     it "creates reservations using available rooms" do
       expect(@first_res.room.id).must_equal 1
       
-      second_res = @sys.make_reservation(Date.parse('2019-06-01'), Date.parse('2019-06-06'))
+      second_res = @sys.make_reservation(::Date.parse('2019-06-01'), ::Date.parse('2019-06-06'))
       expect(second_res.room.id).must_equal 2
       
-      third_res = @sys.make_reservation(Date.parse('2019-06-05'), Date.parse('2019-06-10'))
+      third_res = @sys.make_reservation(::Date.parse('2019-06-05'), ::Date.parse('2019-06-10'))
       expect(third_res.room.id).must_equal 3
       
-      fourth_res = @sys.make_reservation(Date.parse('2019-06-07'), Date.parse('2019-06-10'))
+      fourth_res = @sys.make_reservation(::Date.parse('2019-06-07'), ::Date.parse('2019-06-10'))
       expect(fourth_res.room.id).must_equal 2
     end
     
     it "returns an error when no rooms are available" do
       19.times do
-        @sys.make_reservation(Date.parse('2019-06-05'), Date.parse('2019-06-08'))
+        @sys.make_reservation(::Date.parse('2019-06-05'), ::Date.parse('2019-06-08'))
       end
       
-      expect{ @sys.make_reservation(Date.parse('2019-06-05'), Date.parse('2019-06-08')) }.must_raise FullOccupancyError
+      expect{ @sys.make_reservation(::Date.parse('2019-06-05'), ::Date.parse('2019-06-08')) }.must_raise FullOccupancyError
     end
   end
   
@@ -103,16 +103,16 @@ describe "System class" do
     end
     
     it "returns nil when no reservations have been made for given date" do
-      res_list = @sys.list_reservations_for(Date.parse('2020-08-09'))
+      res_list = @sys.list_reservations_for(::Date.parse('2020-08-09'))
       
       expect(res_list).must_be_nil
     end
     
     it "returns an array of reservations for a given date" do
-      first_res = @sys.make_reservation(Date.parse('2019-06-05'), Date.parse('2019-06-08'))
-      second_res = @sys.make_reservation(Date.parse('2019-06-06'), Date.parse('2019-06-09'))
+      first_res = @sys.make_reservation(::Date.parse('2019-06-05'), ::Date.parse('2019-06-08'))
+      second_res = @sys.make_reservation(::Date.parse('2019-06-06'), ::Date.parse('2019-06-09'))
       
-      res_list = @sys.list_reservations_for(Date.parse('2019-06-06'))
+      res_list = @sys.list_reservations_for(::Date.parse('2019-06-06'))
       expect(res_list.length).must_equal 2
       expect(res_list.include? first_res).must_equal true
       expect(res_list.include? second_res).must_equal true
@@ -133,11 +133,11 @@ describe "System class" do
     
     it "finds all available rooms" do
       10.times do
-        @sys.make_reservation(Date.parse('2019-06-05'), Date.parse('2019-06-08'))
+        @sys.make_reservation(::Date.parse('2019-06-05'), ::Date.parse('2019-06-08'))
       end
       
-      start_date = Date.parse('2019-06-05')
-      end_date = Date.parse('2019-06-08')
+      start_date = ::Date.parse('2019-06-05')
+      end_date = ::Date.parse('2019-06-08')
       
       available_rooms = @sys.find_all_available_rooms(start_date, end_date)
       
@@ -151,8 +151,8 @@ describe "System class" do
   describe "HotelBlock Creation" do
     before do
       @sys = Hotel::System.new
-      start_date = Date.parse('2019-09-02')
-      end_date = Date.parse('2019-09-05')
+      start_date = ::Date.parse('2019-09-02')
+      end_date = ::Date.parse('2019-09-05')
       @sys.create_hotelblock(start_date: start_date, end_date: end_date, hb_rooms: [1,2,3,4], discount_rate: 165)
     end
     
@@ -164,36 +164,36 @@ describe "System class" do
       expect(@sys.hotelblocks[1][2].room.id).must_equal 3
     end
     
-    it "updates the hoteldates list" do
-      expect(@sys.hoteldates.length).must_equal 3
+    it "updates the hotel.dates list" do
+      expect(@sys.dates.length).must_equal 3
       
-      expect(@sys.hoteldates.first).must_be_instance_of Hotel::HotelDate
+      expect(@sys.dates.first).must_be_instance_of Hotel::Date
       
-      expect(@sys.hoteldates[0].id).must_equal Date.parse('2019-09-02')
-      expect(@sys.hoteldates[1].id).must_equal Date.parse('2019-09-03')
-      expect(@sys.hoteldates[2].id).must_equal Date.parse('2019-09-04')
+      expect(@sys.dates[0].id).must_equal ::Date.parse('2019-09-02')
+      expect(@sys.dates[1].id).must_equal ::Date.parse('2019-09-03')
+      expect(@sys.dates[2].id).must_equal ::Date.parse('2019-09-04')
     end
     
     it "excludes the room from reservation during the same date range" do
-      new_reservation = @sys.make_reservation(Date.parse('2019-09-04'), Date.parse('2019-09-07'))
+      new_reservation = @sys.make_reservation(::Date.parse('2019-09-04'), ::Date.parse('2019-09-07'))
       expect(new_reservation.room.id).must_equal 5
       
       15.times do
-        @sys.make_reservation(Date.parse('2019-09-04'), Date.parse('2019-09-07'))
+        @sys.make_reservation(::Date.parse('2019-09-04'), ::Date.parse('2019-09-07'))
       end
       
-      expect{@sys.make_reservation(Date.parse('2019-09-04'), Date.parse('2019-09-07'))}.must_raise FullOccupancyError
+      expect{@sys.make_reservation(::Date.parse('2019-09-04'), ::Date.parse('2019-09-07'))}.must_raise FullOccupancyError
     end
     
     it "excludes the room from be added to hotel block during the same date range" do
-      start_date = Date.parse('2019-09-04')
-      end_date = Date.parse('2019-09-07')
+      start_date = ::Date.parse('2019-09-04')
+      end_date = ::Date.parse('2019-09-07')
       expect{@sys.create_hotelblock(start_date: start_date, end_date: end_date, hb_rooms: [2,5,6,7], discount_rate: 165)}.must_raise ArgumentError
     end
     
     it "raises an error when trying to create a block of more than 5 rooms" do
-      start_date = Date.parse('2019-09-02')
-      end_date = Date.parse('2019-09-05')
+      start_date = ::Date.parse('2019-09-02')
+      end_date = ::Date.parse('2019-09-05')
       expect{@sys.create_hotelblock(start_date: start_date, end_date: end_date, hb_rooms: [1,2,3,4,5,6], discount_rate: 165)}.must_raise ArgumentError
     end
   end
@@ -201,8 +201,8 @@ describe "System class" do
   describe "Reserving from a HotelBlock" do
     before do
       @sys = Hotel::System.new
-      start_date = Date.parse('2019-09-02')
-      end_date = Date.parse('2019-09-05')
+      start_date = ::Date.parse('2019-09-02')
+      end_date = ::Date.parse('2019-09-05')
       hotel_block = @sys.create_hotelblock(start_date: start_date, end_date: end_date, hb_rooms: [7,8,9,10], discount_rate: 165)
       
       @sys.reserve_from_block(1, 8)
@@ -214,8 +214,8 @@ describe "System class" do
     end
     
     it "makes reservations for the duration of the hotel block" do
-      expect(@sys.reservations[0].start_date).must_equal Date.parse('2019-09-02')
-      expect(@sys.reservations[0].end_date).must_equal Date.parse('2019-09-05')
+      expect(@sys.reservations[0].start_date).must_equal ::Date.parse('2019-09-02')
+      expect(@sys.reservations[0].end_date).must_equal ::Date.parse('2019-09-05')
     end
     
     it "returns all available rooms in a HotelBlock" do

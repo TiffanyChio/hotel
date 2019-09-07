@@ -9,12 +9,12 @@ require_relative 'custom_errors'
 module Hotel
   class System
     
-    attr_reader :rooms, :reservations, :hoteldates, :hotelblocks
+    attr_reader :rooms, :reservations, :dates, :hotelblocks
     
     def initialize
       @rooms = Hotel::Room.generate_rooms
       @reservations = []
-      @hoteldates = []
+      @dates = []
       
       # Keys will be hotel block ids (shared by all rooms within block).
       # Values will be arrays of hotel block objects within same block.
@@ -27,7 +27,7 @@ module Hotel
     end
     
     def find_date(date_obj)
-      return @hoteldates.find { |hotel_date| hotel_date.id == date_obj }
+      return @dates.find { |hotel_date| hotel_date.id == date_obj }
     end
     
     def find_all_available_rooms(start_date, end_date)
@@ -68,8 +68,8 @@ module Hotel
         if date_obj 
           date_obj.add_occupancy(new_occupancy)
         else
-          new_date_obj = Hotel::HotelDate.new(current_date)
-          @hoteldates << new_date_obj
+          new_date_obj = Hotel::Date.new(current_date)
+          @dates << new_date_obj
           new_date_obj.add_occupancy(new_occupancy)
         end
         
