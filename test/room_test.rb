@@ -3,7 +3,6 @@ require_relative 'test_helper'
 describe "Room class" do
   describe "Room instantiation" do
     before do
-      # Must use @ to make it accessible without a reader
       @room = Hotel::Room.new(15, 200.00)
     end
     
@@ -18,6 +17,22 @@ describe "Room class" do
       
       expect(@room.id).must_be_instance_of Integer
       expect(@room.cost).must_be_instance_of Float
+    end
+    
+    describe "Room generation" do
+      before do
+        @room_array = Hotel::Room.generate_rooms
+      end
+      
+      it "generates an array of rooms" do
+        expect(@room_array).must_be_instance_of Array
+        expect(@room_array.first).must_be_kind_of Hotel::Room
+        expect(@room_array.last).must_be_kind_of Hotel::Room
+      end
+      
+      it "generates the correct number of rooms" do
+        expect(@room_array.length).must_equal 20
+      end
     end
   end
 end

@@ -26,7 +26,7 @@ module Hotel
     end
     
     # Returns all occupied rooms, either reserved or blocked.
-    def rooms_occupied
+    def rooms_unavailable
       return @occupied.keys
     end
     

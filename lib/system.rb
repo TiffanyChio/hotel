@@ -36,7 +36,7 @@ module Hotel
       
       until current_date == end_date
         hotel_date = find_date(current_date)
-        available_rooms -= hotel_date.rooms_occupied if hotel_date
+        available_rooms -= hotel_date.rooms_unavailable if hotel_date
         current_date += 1
       end
       
