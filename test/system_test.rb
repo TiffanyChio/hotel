@@ -103,7 +103,7 @@ describe "System class" do
     end
     
     it "returns nil when no reservations have been made for given date" do
-      res_list = @sys.list_reservations_for('2020-08-09')
+      res_list = @sys.list_reservations_for(Date.parse('2020-08-09'))
       
       expect(res_list).must_be_nil
     end
@@ -112,7 +112,7 @@ describe "System class" do
       first_res = @sys.make_reservation(Date.parse('2019-06-05'), Date.parse('2019-06-08'))
       second_res = @sys.make_reservation(Date.parse('2019-06-06'), Date.parse('2019-06-09'))
       
-      res_list = @sys.list_reservations_for('2019-06-06')
+      res_list = @sys.list_reservations_for(Date.parse('2019-06-06'))
       expect(res_list.length).must_equal 2
       expect(res_list.include? first_res).must_equal true
       expect(res_list.include? second_res).must_equal true
@@ -151,7 +151,9 @@ describe "System class" do
   describe "HotelBlock Creation" do
     before do
       @sys = Hotel::System.new
-      @sys.create_hotelblock(start_date: '2019-09-02', end_date: '2019-09-05', hb_rooms: [1,2,3,4], discount_rate: 165)
+      start_date = Date.parse('2019-09-02')
+      end_date = Date.parse('2019-09-05')
+      @sys.create_hotelblock(start_date: start_date, end_date: end_date, hb_rooms: [1,2,3,4], discount_rate: 165)
     end
     
     it "adds to the hotelblocks list" do
@@ -184,18 +186,24 @@ describe "System class" do
     end
     
     it "excludes the room from be added to hotel block during the same date range" do
-      expect{@sys.create_hotelblock(start_date: '2019-09-04', end_date: '2019-09-07', hb_rooms: [2,5,6,7], discount_rate: 165)}.must_raise ArgumentError
+      start_date = Date.parse('2019-09-04')
+      end_date = Date.parse('2019-09-07')
+      expect{@sys.create_hotelblock(start_date: start_date, end_date: end_date, hb_rooms: [2,5,6,7], discount_rate: 165)}.must_raise ArgumentError
     end
     
     it "raises an error when trying to create a block of more than 5 rooms" do
-      expect{@sys.create_hotelblock(start_date: '2019-09-02', end_date: '2019-09-05', hb_rooms: [1,2,3,4,5,6], discount_rate: 165)}.must_raise ArgumentError
+      start_date = Date.parse('2019-09-02')
+      end_date = Date.parse('2019-09-05')
+      expect{@sys.create_hotelblock(start_date: start_date, end_date: end_date, hb_rooms: [1,2,3,4,5,6], discount_rate: 165)}.must_raise ArgumentError
     end
   end
   
   describe "Reserving from a HotelBlock" do
     before do
       @sys = Hotel::System.new
-      hotel_block = @sys.create_hotelblock(start_date: '2019-09-02', end_date: '2019-09-05', hb_rooms: [7,8,9,10], discount_rate: 165)
+      start_date = Date.parse('2019-09-02')
+      end_date = Date.parse('2019-09-05')
+      hotel_block = @sys.create_hotelblock(start_date: start_date, end_date: end_date, hb_rooms: [7,8,9,10], discount_rate: 165)
       
       @sys.reserve_from_block(1, 8)
     end

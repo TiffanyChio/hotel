@@ -15,8 +15,9 @@ module Hotel
       @reservations = []
       @hoteldates = []
       
-      # keys will be hotel block ids (shared by all rooms within block)
-      # values will be arrays of hotel block objects within same block
+      # Keys will be hotel block ids (shared by all rooms within block).
+      # Values will be arrays of hotel block objects within same block.
+      # Each array element represents one room. 
       @hotelblocks = {}
     end
     
@@ -75,9 +76,8 @@ module Hotel
       end
     end
     
-    # TIFF CHANGED FROM STRING TO OBJ
-    def list_reservations_for(date_string)
-      hotel_date = find_date(Date.parse(date_string))
+    def list_reservations_for(date)
+      hotel_date = find_date(date)
       
       if hotel_date 
         return hotel_date.list_reservations
@@ -86,13 +86,8 @@ module Hotel
       end
     end
     
-    # Dates are strings
     # hb_rooms is an array of room_ids
-    # Discount rate can be whatever number
     def create_hotelblock(start_date:, end_date:, hb_rooms:, discount_rate:)
-      start_date = Date.parse(start_date)
-      end_date = Date.parse(end_date)
-      discount_rate = discount_rate.to_f
       hb_rooms.map! { |room_id| find_room(room_id) }
       
       if hb_rooms.length > 5
@@ -103,16 +98,15 @@ module Hotel
       
       # Does block contain a room that is not part of available rooms?
       # If so raise an error.
-      # Hey TIFF make this part longer to include which room
       if hb_rooms.map{ |room| available_rooms.include? room}.include? false
-        raise ArgumentError, 'Block contains room already booked.'
+        raise ArgumentError, 'Block contains room that is already booked.'
       end
       
       hb_id = @hotelblocks.length + 1
       @hotelblocks[hb_id] = []
       
       hb_rooms.each do |room|
-        new_hotel_block = Hotel::HotelBlock.new(id: hb_id, room: room, start_date: start_date, end_date: end_date, cost:discount_rate)
+        new_hotel_block = Hotel::HotelBlock.new(id: hb_id, room: room, start_date: start_date, end_date: end_date, cost:discount_rate.to_f)
         
         @hotelblocks[hb_id] << new_hotel_block
         
@@ -124,22 +118,22 @@ module Hotel
       hotel_blocks = @hotelblocks[hb_id]
       open_rooms = hotel_blocks.select { |hotel_block| hotel_block.status == :AVAILABLE}
       
+      # Return open rooms as room IDs rather than Room objects for end user readability.
       open_rooms.map! { |hotel_block| hotel_block.room.id}
       
       return open_rooms
     end
     
     def reserve_from_block(hb_id, room_id)
-      # check availability
       unless find_open_rooms_from_block(hb_id).include? room_id
         raise ArgumentError, 'The room you are trying to book is not available.'
       end
       
-      # change status 
+      # Change room status so room can no longer be booked.
       hotel_block = @hotelblocks[hb_id].find {|hb| hb.room.id == room_id}
       hotel_block.change_status
       
-      # make reservation with pre-determined arg
+      # Reservation is made using hotel block dates and cost.
       id = @reservations.length + 1
       room = find_room(room_id)
       start_date = hotel_block.start_date
@@ -148,7 +142,6 @@ module Hotel
       
       new_reservation = Hotel::Reservation.new(id: id, room: room, start_date: start_date, end_date: end_date, cost: cost)
       
-      # Connect to Reservations List
       @reservations << new_reservation 
     end
     
