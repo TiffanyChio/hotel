@@ -30,9 +30,8 @@ describe "HotelBlock class" do
       expect(@hotelblock.cost).must_be_close_to 100.0
     end 
     
-    # TIFF PUT THIS SOMEWHERE ELSE
     it "correctly calculates total_cost" do
-      expect(@hotelblock.find_total_cost).must_be_close_to 100.0*5
+      expect(@hotelblock.find_total_cost).must_be_close_to 500.0
     end
   end
   
@@ -56,20 +55,19 @@ describe "HotelBlock class" do
   end
   
   describe "raises an exception when an invalid date range is provided" do
+    before do
+      @room_15 = Hotel::Room.new(15, 200.00)
+      @start_time = ::Date.parse('2019-09-03')
+    end
+    
     it "raises an error if end date is before start date" do
-      room_15 = Hotel::Room.new(15, 200.00)
-      start_time = ::Date.parse('2019-09-03')
       end_time = ::Date.parse('2019-09-01')
       
-      expect{Hotel::HotelBlock.new(id: 101, room: room_15, start_date: start_time, end_date: end_time, cost: 100)}.must_raise ArgumentError
+      expect{Hotel::HotelBlock.new(id: 101, room: @room_15, start_date: @start_time, end_date: end_time, cost: 100)}.must_raise ArgumentError
     end
     
     it "raises an error if end date is on same day as start date" do
-      room_15 = Hotel::Room.new(15, 200.00)
-      start_time = ::Date.parse('2019-09-03')
-      end_time = ::Date.parse('2019-09-03')
-      
-      expect{Hotel::HotelBlock.new(id: 101, room: room_15, start_date: start_time, end_date: end_time, cost: 100)}.must_raise ArgumentError
+      expect{Hotel::HotelBlock.new(id: 101, room: @room_15, start_date: @start_time, end_date: @start_time, cost: 100)}.must_raise ArgumentError
     end
   end
 end
