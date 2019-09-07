@@ -4,6 +4,7 @@ require_relative 'room'
 require_relative 'reservation'
 require_relative 'hoteldate'
 require_relative 'hotelblock'
+require_relative 'custom_errors'
 
 module Hotel
   class System
@@ -146,8 +147,5 @@ module Hotel
     end
     
   end
-end
-
-class FullOccupancyError < StandardError
 end
 

@@ -1,0 +1,2 @@
+class FullOccupancyError < StandardError
+end
