@@ -14,14 +14,37 @@ module Hotel
       @rooms = Hotel::Room.generate_rooms
       @reservations = []
       @hoteldates = []
+      
+      # keys will be hotel block ids (shared by all rooms within block)
+      # values will be arrays of hotel block objects within same block
       @hotelblocks = {}
     end
     
-    # Assume date inputs come in string format
-    def make_reservation(start_date:, end_date:) 
+    def find_room(room_id)
+      return @rooms.find { |room| room.id == room_id }
+    end
+    
+    def find_date(date_obj)
+      return @hoteldates.find { |hotel_date| hotel_date.id == date_obj }
+    end
+    
+    def find_all_available_rooms(start_date, end_date)
+      current_date = start_date.dup
+      available_rooms = @rooms.dup
+      
+      until current_date == end_date
+        hotel_date = find_date(current_date)
+        available_rooms -= hotel_date.rooms_occupied if hotel_date
+        current_date += 1
+      end
+      
+      return available_rooms
+    end
+    
+    # TIFF YOU CHANGED FROM KEYWORD TO NON-KEYWORD
+    # FROM STRING TO DATE OBJ
+    def make_reservation(start_date, end_date) 
       id = @reservations.length + 1
-      start_date = Date.parse(start_date)
-      end_date = Date.parse(end_date)
       
       # Find a room with no overlap
       room = find_all_available_rooms(start_date, end_date)[0]
@@ -41,23 +64,6 @@ module Hotel
       return new_reservation
     end
     
-    def find_all_available_rooms(start_date, end_date)
-      current_date = start_date.dup
-      all_occupied_rooms = []
-      
-      until current_date == end_date
-        hotel_date = find_date(current_date)
-        
-        all_occupied_rooms += hotel_date.rooms_occupied if hotel_date 
-        
-        current_date += 1
-      end
-      
-      all_occupied_rooms.uniq!
-      
-      return @rooms - all_occupied_rooms
-    end
-    
     def add_to_dates(start_date, end_date, new_reservation)
       current_date = start_date.dup
       
@@ -71,14 +77,6 @@ module Hotel
         end
         current_date += 1
       end
-    end
-    
-    def find_room(room_id)
-      return @rooms.find { |room| room.id == room_id }
-    end
-    
-    def find_date(date_obj)
-      return @hoteldates.find { |hotel_date| hotel_date.id == date_obj }
     end
     
     def list_reservations_for(date_string)
