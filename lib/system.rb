@@ -41,46 +41,44 @@ module Hotel
       return available_rooms
     end
     
-    # TIFF YOU CHANGED FROM KEYWORD TO NON-KEYWORD
-    # FROM STRING TO DATE OBJ
     def make_reservation(start_date, end_date) 
       id = @reservations.length + 1
       
-      # Find a room with no overlap
+      # assign the first available room to the reservation
       room = find_all_available_rooms(start_date, end_date)[0]
-      raise ArgumentError, 'No rooms available' if room == nil
+      raise FullOccupancyError.new('No rooms available for the date range.') if room == nil
       
-      # Create Reservation
       new_reservation = Hotel::Reservation.new(id: id, room: room, start_date: start_date, end_date: end_date)
       
-      # Connect to Reservations List
       @reservations << new_reservation
-      
-      # Create Date or Add to it, add to Dates list
       add_to_dates(start_date, end_date, new_reservation)
       
-      #TIFF GET RID OF THIS AND CORRESPONDING TEST
-      # return new_reservation
       return new_reservation
     end
     
-    def add_to_dates(start_date, end_date, new_reservation)
+    # new_occupancy refers to reservation or hotel block to be added to dates
+    def add_to_dates(start_date, end_date, new_occupancy)
       current_date = start_date.dup
       
       until current_date == end_date
         date_obj = find_date(current_date)
+        
         if date_obj 
-          date_obj.add_occupancy(new_reservation)
+          date_obj.add_occupancy(new_occupancy)
         else
-          @hoteldates << Hotel::HotelDate.new(current_date)
-          find_date(current_date).add_occupancy(new_reservation)
+          new_date_obj = Hotel::HotelDate.new(current_date)
+          @hoteldates << new_date_obj
+          new_date_obj.add_occupancy(new_occupancy)
         end
+        
         current_date += 1
       end
     end
     
+    # TIFF CHANGED FROM STRING TO OBJ
     def list_reservations_for(date_string)
       hotel_date = find_date(Date.parse(date_string))
+      
       if hotel_date 
         return hotel_date.list_reservations
       else 
@@ -157,5 +155,6 @@ module Hotel
   end
 end
 
-
+class FullOccupancyError < StandardError
+end
 

@@ -93,7 +93,7 @@ describe "System class" do
         @sys.make_reservation(Date.parse('2019-06-05'), Date.parse('2019-06-08'))
       end
       
-      expect{ @sys.make_reservation(Date.parse('2019-06-05'), Date.parse('2019-06-08')) }.must_raise ArgumentError
+      expect{ @sys.make_reservation(Date.parse('2019-06-05'), Date.parse('2019-06-08')) }.must_raise FullOccupancyError
     end
   end
   
@@ -180,7 +180,7 @@ describe "System class" do
         @sys.make_reservation(Date.parse('2019-09-04'), Date.parse('2019-09-07'))
       end
       
-      expect{@sys.make_reservation(Date.parse('2019-09-04'), Date.parse('2019-09-07'))}.must_raise ArgumentError
+      expect{@sys.make_reservation(Date.parse('2019-09-04'), Date.parse('2019-09-07'))}.must_raise FullOccupancyError
     end
     
     it "excludes the room from be added to hotel block during the same date range" do
