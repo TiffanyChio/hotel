@@ -23,20 +23,20 @@ describe "System class" do
       expect(@sys.hotelblocks).must_be_instance_of Hash
     end
     
-    it "executes generate rooms method correctly" do
+    it "allows access to the list of all rooms" do
       expect(@sys.rooms.length).must_equal 20
       expect(@sys.rooms[11].id).must_equal 12
       expect(@sys.rooms[11].cost).must_equal 200.0
     end
   end
   
-  describe "making a room reservation" do
+  describe "room reservation creation" do
     before do
       @sys = Hotel::System.new
       @first_res = @sys.make_reservation(::Date.parse('2019-06-05'), ::Date.parse('2019-06-08'))
     end
     
-    it "returns a new reservation with correct dates" do
+    it "generates reserves a room for a given date range" do
       expect(@first_res).must_be_instance_of Hotel::Reservation
       
       expect(@first_res.id).must_equal 1
@@ -97,7 +97,40 @@ describe "System class" do
     end
   end
   
-  describe "list_reservations_for method" do
+  describe "reservation overlap verification" do
+    before do
+      @sys = Hotel::System.new
+      @first_res = @sys.make_reservation(::Date.parse('2019-06-05'), ::Date.parse('2019-06-08'))
+    end
+    
+    it "reservations do not impact list of available rooms outside of date range" do
+      same_date_range = @sys.find_all_available_rooms(::Date.parse('2019-06-05'), ::Date.parse('2019-06-08'))
+      well_before_start_date = @sys.find_all_available_rooms(::Date.parse('2019-01-11'), ::Date.parse('2019-01-22'))
+      well_after_end_date = @sys.find_all_available_rooms(::Date.parse('2019-10-11'), ::Date.parse('2019-10-22'))
+      
+      expect(same_date_range.length).must_equal 19
+      expect(well_before_start_date.length).must_equal 20
+      expect(well_after_end_date.length).must_equal 20
+    end
+    
+    it "allows reservation of room in which check-in day is the same as another reservation's check-out day" do
+      start_date_is_end_date = @sys.find_all_available_rooms(::Date.parse('2019-06-08'), ::Date.parse('2019-06-10'))
+      
+      expect(start_date_is_end_date.length).must_equal 20
+      expect(@first_res.room.id).must_equal 1
+      expect(start_date_is_end_date.include? 1).must_equal false
+    end
+    
+    it "excludes rooms for reservations if they have smaller pre-existing reservations within date range" do
+      @second_res = @sys.make_reservation(::Date.parse('2019-06-06'), ::Date.parse('2019-06-10'))
+      @third_res = @sys.make_reservation(::Date.parse('2019-06-07'), ::Date.parse('2019-06-09'))
+      
+      spans_all_res = @sys.find_all_available_rooms(::Date.parse('2019-06-01'), ::Date.parse('2019-06-12'))
+      expect(spans_all_res.length).must_equal 17
+    end
+  end
+  
+  describe "list reservations for date method" do
     before do
       @sys = Hotel::System.new
     end
@@ -119,7 +152,7 @@ describe "System class" do
     end
   end
   
-  describe "FILL IN NAME" do
+  describe "Finds Available Rooms" do
     before do
       @sys = Hotel::System.new
     end
@@ -131,7 +164,7 @@ describe "System class" do
       expect(room_obj.id).must_equal 16
     end
     
-    it "finds all available rooms" do
+    it "returns list of rooms that are not reserved for a given date range" do
       10.times do
         @sys.make_reservation(::Date.parse('2019-06-05'), ::Date.parse('2019-06-08'))
       end
