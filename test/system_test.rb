@@ -221,13 +221,21 @@ describe "System class" do
     it "excludes the room from be added to hotel block during the same date range" do
       start_date = ::Date.parse('2019-09-04')
       end_date = ::Date.parse('2019-09-07')
+      
       expect{@sys.create_hotelblock(start_date: start_date, end_date: end_date, hb_rooms: [2,5,6,7], discount_rate: 165)}.must_raise ArgumentError
     end
     
     it "raises an error when trying to create a block of more than 5 rooms" do
       start_date = ::Date.parse('2019-09-02')
       end_date = ::Date.parse('2019-09-05')
+      
       expect{@sys.create_hotelblock(start_date: start_date, end_date: end_date, hb_rooms: [1,2,3,4,5,6], discount_rate: 165)}.must_raise ArgumentError
+    end
+    
+    it "allows blocking of room in which check-in day is the same as another block's check-out day" do
+      @sys.create_hotelblock(start_date: ::Date.parse('2019-09-05'), end_date: ::Date.parse('2019-09-09'), hb_rooms: [1,2,3,4], discount_rate: 140)
+      
+      expect(@sys.hotelblocks[2].first.start_date).must_equal ::Date.parse('2019-09-05')
     end
   end
   
