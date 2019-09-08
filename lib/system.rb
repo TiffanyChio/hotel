@@ -92,12 +92,13 @@ module Hotel
       hb_rooms.map! { |room_id| find_room(room_id) }
       
       if hb_rooms.length > 5
-        raise ArgumentError, 'A block can contain a maximum of 5 rooms.'
+        raise ArgumentError, 'A block can only contain a maximum of 5 rooms.'
       end
       
       available_rooms = find_all_available_rooms(start_date, end_date)
       
-      # Does block contain a room that is not part of available rooms?
+      # Change hb_rooms into a array of boolean values for whether they are available
+      # Does the array contain false (room is not available)?
       # If so raise an error.
       if hb_rooms.map{ |room| available_rooms.include? room}.include? false
         raise ArgumentError, 'Block contains room that is already booked.'
@@ -134,7 +135,7 @@ module Hotel
       hotel_block = @hotelblocks[hb_id].find {|hb| hb.room.id == room_id}
       hotel_block.change_status
       
-      # Reservation is made using hotel block dates and cost.
+      # Reservation is hardcoded to use hotel block dates and cost.
       id = @reservations.length + 1
       room = find_room(room_id)
       start_date = hotel_block.start_date
