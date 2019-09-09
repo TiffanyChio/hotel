@@ -5,3 +5,15 @@ Possible future changes:
 - change Hotel::HotelBlock to simply Hotel::Block
   - cmd + shift + F for HotelBlock and hotel_block across all files
   - change delete hotel or hotel_ (case insensitive)
+
+Possible but improbable future changes:
+- remove room and date class
+  - requires rewriting the entire code
+  - reduces dependencies 
+  - however, will shift most of the responsibilities to system class
+  - difficult to flesh out concrete ideas 
+    - room class was created to allow for easier refactoring if room pricing structure changed
+    - date class allows for more readable code by creating another database that acts as a calendar
+      - tracking room availability can be done by iterating through all reservations & hotel blocks to look for date matches
+        - if match, mark the room as unavailable
+        - or if match, add the reservation to an array to be returned after iteration complete
