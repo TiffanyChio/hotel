@@ -1,0 +1,7 @@
+Possible future changes:
+- limit reservations to 30 days at a time maximum to discourage users from making long reservations
+  - include validation for date ranges to throw error if date range is over 30 days 
+
+- change Hotel::HotelBlock to simply Hotel::Block
+  - cmd + shift + F for HotelBlock and hotel_block across all files
+  - change delete hotel or hotel_ (case insensitive)

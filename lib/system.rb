@@ -87,8 +87,8 @@ module Hotel
       end
     end
     
-    # hb_rooms is an array of room_ids
     def create_hotelblock(start_date:, end_date:, hb_rooms:, discount_rate:)
+      # hb_rooms is an array of room_ids
       hb_rooms.map! { |room_id| find_room(room_id) }
       
       if hb_rooms.length > 5
