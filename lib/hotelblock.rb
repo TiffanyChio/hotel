@@ -16,6 +16,11 @@ module Hotel
     def change_status
       @status = :UNAVAILABLE
     end
+    
+    def make_res_from_hb(reservation_id)
+      new_reservation = Hotel::Reservation.new(id: reservation_id, room: @room, start_date: @start_date, end_date: @end_date, cost: @cost)
+      return new_reservation
+    end
   end
 end
 

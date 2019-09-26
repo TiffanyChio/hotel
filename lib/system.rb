@@ -14,6 +14,9 @@ module Hotel
     def initialize
       @rooms = Hotel::Room.generate_rooms
       @reservations = []
+      
+      # Hotel::Date objects hold information on reservations and hotel blocks
+      # made on a specific date
       @dates = []
       
       # Keys will be hotel block ids (shared by all rooms within block).
@@ -136,13 +139,9 @@ module Hotel
       hotel_block.change_status
       
       # Reservation is hardcoded to use hotel block dates and cost.
-      id = @reservations.length + 1
-      room = find_room(room_id)
-      start_date = hotel_block.start_date
-      end_date = hotel_block.end_date
-      cost = hotel_block.cost
+      reservation_id = @reservations.length + 1
       
-      new_reservation = Hotel::Reservation.new(id: id, room: room, start_date: start_date, end_date: end_date, cost: cost)
+      new_reservation = hotel_block.make_res_from_hb(reservation_id)
       
       @reservations << new_reservation 
     end

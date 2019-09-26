@@ -67,3 +67,11 @@ Implementation B.
 
 
 
+
+Revisiting Hotel
+In my previous code, System calls on some of HotelBlock's instance variables to make a new reservation. Instead, I will now change the code so that HotelBlock makes the reservation and return the reservation to be stored in HotelBlock.
+
+
+
+
+
